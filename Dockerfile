@@ -9,10 +9,10 @@ RUN apt-get update && \
     apt-get -y install libc6:i386 libncurses5:i386 libstdc++6:i386 libc6-dev-i386 -y > /dev/null && \
     apt-get -y install binutils-arm-none-eabi
 
-RUN pip install -U setuptools ledgerblue==0.1.15
-
 ADD install_compiler.sh /tmp/install_compiler.sh
 RUN /tmp/install_compiler.sh
+
+RUN pip install -U setuptools ledgerblue==0.1.16
 
 #VOLUME
 RUN echo "export BOLOS_SDK=/opt/bolos/nanos-secure-sdk" >> ~/.bashrc
