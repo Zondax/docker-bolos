@@ -12,7 +12,8 @@ RUN apt-get update && \
 ADD install_compiler.sh /tmp/install_compiler.sh
 RUN /tmp/install_compiler.sh
 
-RUN pip install -U setuptools ledgerblue==0.1.16
+RUN pip install -U setuptools ledgerblue==0.1.17
+RUN adduser -u 1000 test
 
 #VOLUME
 RUN echo "export BOLOS_SDK=/opt/bolos/nanos-secure-sdk" >> ~/.bashrc
