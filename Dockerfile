@@ -12,7 +12,7 @@ RUN apt-get update && \
 ADD install_compiler.sh /tmp/install_compiler.sh
 RUN /tmp/install_compiler.sh
 
-RUN pip install -U setuptools ledgerblue==0.1.17
+RUN pip install -U setuptools ledgerblue>=0.1.21
 RUN adduser -u 1000 test
 
 #VOLUME
