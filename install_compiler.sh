@@ -21,7 +21,4 @@ ln -s ${DEST}/clang-arm-fropi/bin/clang /usr/bin/clang
 # Avoid high UID/GID that affect CircleCI
 chown root:root /opt/bolos -R
 
-#wget -q -O - https://www.ledgerwallet.com/support/add_udev_rules.sh | bash
-#usermod -a -G plugdev vagrant
-
 echo "export BOLOS_ENV=/opt/bolos" >> ~/.bashrc
