@@ -46,8 +46,8 @@ RUN su - test -c ". /home/test/.cargo/env && rustup target add thumbv6m-none-eab
 RUN su - test -c ". /home/test/.cargo/env && rustup target add --toolchain nightly thumbv6m-none-eabi"
 
 # ENV
-RUN echo "export BOLOS_SDK=/opt/bolos/nanos-secure-sdk" >> ~/.bashrc
-RUN echo "alias python=python3" >> ~/.bashrc
+RUN echo "export BOLOS_SDK=/opt/bolos/nanos-secure-sdk" >> /home/test/.bashrc
+RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # START SCRIPT
 ENTRYPOINT ["sh", "-c", ". /home/test/.cargo/env && \"$@\"", "-s"]
