@@ -41,12 +41,13 @@ RUN pip3 install -U setuptools ledgerblue pillow
 # Rust
 RUN apt-get update && apt-get -y install curl
 RUN su - test -c "curl https://sh.rustup.rs -sSf | bash -s -- -y"
-RUN su - test -c ". /home/test/.cargo/env && rustup install nightly"
+RUN su - test -c ". /home/test/.cargo/env && rustup toolchain install nightly"
 RUN su - test -c ". /home/test/.cargo/env && rustup target add thumbv6m-none-eabi"
-#RUN su - test -c ". /home/test/.cargo/env && rustup +nightly target add thumbv6m-none-eabi"
+RUN su - test -c ". /home/test/.cargo/env && rustup target add --toolchain nightly thumbv6m-none-eabi"
 
 # ENV
 RUN echo "export BOLOS_SDK=/opt/bolos/nanos-secure-sdk" >> ~/.bashrc
 RUN echo "alias python=python3" >> ~/.bashrc
 
 # START SCRIPT
+ENTRYPOINT ["sh", "-c", ". /home/test/.cargo/env && \"$@\"", "-s"]
