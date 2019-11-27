@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-docker build --rm -f Dockerfile -t zondax/ledger-docker-bolos .
+docker build --rm --build-arg REFRESH_SPECULOS -f Dockerfile -t zondax/ledger-docker-bolos .
