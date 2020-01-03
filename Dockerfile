@@ -16,11 +16,7 @@
 #Download base ubuntu image
 FROM ubuntu:18.04
 RUN apt-get update && \
-    apt-get -y install build-essential git wget sudo udev zip curl cmake
-
-RUN adduser --disabled-password --gecos "" -u 1000 test
-RUN echo "test ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-WORKDIR /home/test
+    apt-get -y install build-essential ccache golang-go git wget sudo udev zip curl cmake software-properties-common
 
 # udev rules
 ADD 20-hw1.rules /etc/udev/rules.d/20-hw1.rules
@@ -35,33 +31,53 @@ RUN apt-get update && \
 ADD install_compiler.sh /tmp/install_compiler.sh
 RUN /tmp/install_compiler.sh
 
-# Python
+# Install Python
 RUN apt-get update && apt-get -y install python3 python3-pip
+RUN ln -s /usr/bin/python3 /usr/bin/python
 RUN pip3 install -U setuptools ledgerblue pillow
 
-# Rust
+# Speculos dependencies
+RUN apt-get update && apt-get -y install qemu-user-static python3-pyqt5 python3-construct python3-mnemonic python3-pyelftools gcc-arm-linux-gnueabihf libc6-dev-armhf-cross gdb-multiarch libvncserver-dev
+
+# Create test user
+RUN adduser --disabled-password --gecos "" -u 1000 test
+RUN echo "test ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+WORKDIR /home/test
+
+# Install Rust
 RUN su - test -c "curl https://sh.rustup.rs -sSf | bash -s -- -y"
 RUN su - test -c ". /home/test/.cargo/env && rustup toolchain install nightly"
 RUN su - test -c ". /home/test/.cargo/env && rustup target add thumbv6m-none-eabi"
 RUN su - test -c ". /home/test/.cargo/env && rustup target add --toolchain nightly thumbv6m-none-eabi"
 
+####################################
+####################################
+USER test
+
 # ENV
 RUN echo "export BOLOS_SDK=/opt/bolos/nanos-secure-sdk" >> /home/test/.bashrc
-RUN ln -s /usr/bin/python3 /usr/bin/python
+RUN mkdir -p /home/test/.ccache
 
-# Speculos
-RUN apt-get update && apt-get -y install qemu-user-static python3-pyqt5 python3-construct python3-mnemonic python3-pyelftools gcc-arm-linux-gnueabihf libc6-dev-armhf-cross gdb-multiarch libvncserver-dev
-
-# Use patched fork
+# Speculos - use patched fork
 ARG REFRESH_SPECULOS=change_to_rebuild_from_here
-USER test
 RUN git clone https://github.com/ZondaX/speculos.git
-
 RUN mkdir -p /home/test/speculos/build
 RUN cd /home/test/speculos && cmake -Bbuild -H.
 RUN make -C /home/test/speculos/build/
+
+# Install ghr
+RUN go get -u -v github.com/tcnksm/ghr
+
+# Open TCP ports
+# gdb
 EXPOSE 1234/tcp
 EXPOSE 1234/udp
+# device keyboard
+EXPOSE 1235/tcp
+EXPOSE 1235/udp
+# APDU
+EXPOSE 9999/tcp
+EXPOSE 9999/udp
 
 # START SCRIPT
 ENTRYPOINT ["sh", "-c", ". /home/test/.cargo/env && \"$@\"", "-s"]
