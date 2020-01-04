@@ -54,15 +54,11 @@ RUN su - test -c ". /home/test/.cargo/env && rustup target add --toolchain night
 ####################################
 USER test
 
-# ENV
-RUN echo "export BOLOS_SDK=/opt/bolos/nanos-secure-sdk" >> /home/test/.bashrc
-RUN mkdir -p /home/test/.ccache
-
 # Speculos - use patched fork
 ARG REFRESH_SPECULOS=change_to_rebuild_from_here
 RUN git clone https://github.com/ZondaX/speculos.git
 RUN mkdir -p /home/test/speculos/build
-RUN cd /home/test/speculos && cmake -Bbuild -H.
+RUN cd /home/test/speculos && cmake -Bbuild -H. -DWITH_VNC=1
 RUN make -C /home/test/speculos/build/
 
 # Install ghr
@@ -75,9 +71,20 @@ EXPOSE 1234/udp
 # device keyboard
 EXPOSE 1235/tcp
 EXPOSE 1235/udp
+# HTTP
+EXPOSE 9998/tcp
+EXPOSE 9998/udp
 # APDU
 EXPOSE 9999/tcp
 EXPOSE 9999/udp
 
+# ENV
+RUN echo "export BOLOS_SDK=/opt/bolos/nanos-secure-sdk" >> /home/test/.bashrc
+RUN mkdir -p /home/test/.ccache
+RUN echo "cache_dir = /project/.ccache" > /home/test/.ccache/ccache.conf
+
+ADD entrypoint.sh /home/test/entrypoint.sh
+
 # START SCRIPT
-ENTRYPOINT ["sh", "-c", ". /home/test/.cargo/env && \"$@\"", "-s"]
+#ENTRYPOINT ["sh", "-c", ". /home/test/.cargo/env && \"$@\"", "-s"]
+ENTRYPOINT ["/home/test/entrypoint.sh"]
