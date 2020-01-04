@@ -79,12 +79,10 @@ EXPOSE 9999/tcp
 EXPOSE 9999/udp
 
 # ENV
-RUN echo "export BOLOS_SDK=/opt/bolos/nanos-secure-sdk" >> /home/test/.bashrc
 RUN mkdir -p /home/test/.ccache
 RUN echo "cache_dir = /project/.ccache" > /home/test/.ccache/ccache.conf
 
 ADD entrypoint.sh /home/test/entrypoint.sh
 
 # START SCRIPT
-#ENTRYPOINT ["sh", "-c", ". /home/test/.cargo/env && \"$@\"", "-s"]
 ENTRYPOINT ["/home/test/entrypoint.sh"]
