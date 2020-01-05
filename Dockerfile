@@ -54,6 +54,9 @@ RUN su - test -c ". /home/test/.cargo/env && rustup target add --toolchain night
 ####################################
 USER test
 
+# Install ghr
+RUN go get -u -v github.com/tcnksm/ghr
+
 # Speculos - use patched fork
 ARG REFRESH_SPECULOS=change_to_rebuild_from_here
 RUN git clone https://github.com/ZondaX/speculos.git
@@ -61,8 +64,8 @@ RUN mkdir -p /home/test/speculos/build
 RUN cd /home/test/speculos && cmake -Bbuild -H. -DWITH_VNC=1
 RUN make -C /home/test/speculos/build/
 
-# Install ghr
-RUN go get -u -v github.com/tcnksm/ghr
+# Patch proxy to connect to all interfaces
+RUN sed -i "s/HOST = '127.0.0.1'/HOST = '0.0.0.0'/g" speculos/tools/ledger-live-http-proxy.py
 
 # Open TCP ports
 # gdb
