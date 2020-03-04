@@ -7,10 +7,10 @@ echo "Zondax BOLOS container - zondax.ch"
 echo "--------------------------------------"
 echo
 
-source /home/test/.cargo/env
+source /home/zondax/.cargo/env
 
 echo "HTTP proxy started..."
-/home/test/speculos/tools/ledger-live-http-proxy.py -v &
+/home/zondax/speculos/tools/ledger-live-http-proxy.py -v &
 
 echo -e $(printenv | grep BOLOS)
 

@@ -10,8 +10,6 @@ INTERACTIVE_SETTING:=
 TTY_SETTING:=
 endif
 
-REFRESH_SPECULOS = 1
-
 define run_docker
 	docker run $(TTY_SETTING) $(INTERACTIVE_SETTING) --rm \
 	--privileged \
@@ -19,13 +17,13 @@ define run_docker
 	-v $(shell pwd):/project \
 	-e DISPLAY=$(shell echo ${DISPLAY}) \
 	-v /tmp/.X11-unix:/tmp/.X11-unix:ro \
-	--build-arg REFRESH_SPECULOS
 	$(DOCKER_IMAGE) \
 	"$(1)"
 endef
 
 build:
-	docker build --rm -f Dockerfile $(TTY_SETTING) $(DOCKER_IMAGE) .
+	docker build --rm -f Dockerfile -t $(DOCKER_IMAGE) . 
+	docker tag $(DOCKER_IMAGE) $(DOCKER_IMAGE):v1.1
 
 publish: build
 	docker login
@@ -35,4 +33,4 @@ pull:
 	docker pull $(DOCKER_IMAGE)
 
 shell: build
-	$(call run_docker,zsh)
+	$(call run_docker,bash)
