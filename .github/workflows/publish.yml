@@ -1,0 +1,23 @@
+name: Build
+on: [ push ]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build image
+        run: |
+          export GIT_HASH=$(git rev-parse HEAD)
+          HASH=$GIT_HASH make
+      - name: Login on Docker
+        run: echo "$DOCKER_API_KEY" | docker login --username $DOCKER_USER --password-stdin
+        env:
+          DOCKER_API_KEY: ${{ secrets.DOCKER_API_KEY }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+      - name: Push image
+        run: |
+          export GIT_HASH=$(git rev-parse HEAD)
+          HASH=$GIT_HASH make push
