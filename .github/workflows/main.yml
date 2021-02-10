@@ -7,6 +7,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Get Commit Hash
+        run: |
+          echo 'export GIT_HASH=$(git rev-parse HEAD)' >> $BASH_ENV
       - name: Build image
         run: |
-          make
+          HASH=$GIT_HASH make
