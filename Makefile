@@ -11,24 +11,30 @@ INTERACTIVE_SETTING:=
 TTY_SETTING:=
 endif
 
+ifdef HASH
+HASH_TAG:=$(HASH)
+else
+HASH_TAG:=latest
+endif
+
 default: build
 
 build: build_bolos
 
 build_bolos:
-	cd src && docker build --rm -f Dockerfile -t $(DOCKER_IMAGE_BOLOS) .
+	cd src && docker build --rm -f Dockerfile -t $(DOCKER_IMAGE_BOLOS):$(HASH_TAG) .
 
 publish_login:
 	docker login
 publish_bolos: build_bolos
-	docker push $(DOCKER_IMAGE_BOLOS)
+	docker push $(DOCKER_IMAGE_BOLOS):$(HASH_TAG)
 
 publish: build
 publish: publish_login
 publish: publish_bolos
 
 pull:
-	docker pull $(DOCKER_IMAGE_BOLOS)
+	docker pull $(DOCKER_IMAGE_BOLOS):$(HASH_TAG)
 
 define run_docker
 	docker run $(TTY_SETTING) $(INTERACTIVE_SETTING) \
@@ -43,4 +49,4 @@ endef
 
 
 shell_bolos: build_bolos
-	$(call run_docker,$(DOCKER_IMAGE_BOLOS),/bin/bash)
+	$(call run_docker,$(DOCKER_IMAGE_BOLOS):$(HASH_TAG),/bin/bash)
