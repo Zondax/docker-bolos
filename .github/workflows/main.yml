@@ -4,5 +4,7 @@ on: [ pull_request ]
 jobs:
   configure:
     runs-on: ubuntu-latest
-  steps: |
-    make
+  steps:
+    - name: Build image
+      run: |
+        make
