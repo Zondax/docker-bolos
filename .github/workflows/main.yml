@@ -1,0 +1,13 @@
+name: Build
+on: [ pull_request ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build image
+        run: |
+          export GIT_HASH=$(git rev-parse HEAD)
+          HASH=$GIT_HASH make
