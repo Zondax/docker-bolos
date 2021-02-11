@@ -22,12 +22,12 @@ default: build
 build: build_bolos
 
 build_bolos:
-	cd src && docker build --rm -f Dockerfile -t ghcr.io/$(DOCKER_IMAGE_BOLOS):$(HASH_TAG) -t ghcr.io/$(DOCKER_IMAGE_BOLOS) .
+	cd src && docker build --rm -f Dockerfile -t ghcr.io/$(DOCKER_IMAGE_BOLOS):$(HASH_TAG) -t ghcr.io/$(DOCKER_IMAGE_BOLOS):latest .
 
 publish_login:
 	docker login ghcr.io
 publish_bolos: build_bolos
-	docker push ghcr.io/$(DOCKER_IMAGE_BOLOS)
+	docker push ghcr.io/$(DOCKER_IMAGE_BOLOS):latest
 	docker push ghcr.io/$(DOCKER_IMAGE_BOLOS):$(HASH_TAG)
 
 publish: build

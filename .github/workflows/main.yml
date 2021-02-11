@@ -11,12 +11,3 @@ jobs:
         run: |
           export GIT_HASH=$(git rev-parse HEAD)
           HASH=$GIT_HASH make
-      - name: Login to GitHub Container Registry
-        run: echo $CR_PAT | docker login ghcr.io -u $CR_PAT --password-stdin
-        env:
-          CR_PAT: ${{ secrets.CR_PAT }}
-          CR_USERNAME: ${{ secrets.CR_USERNAME }}
-      - name: Push to GitHub Container Registry
-        run: |
-          export GIT_HASH=$(git rev-parse HEAD)
-          HASH=$GIT_HASH make push
