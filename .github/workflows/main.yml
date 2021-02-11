@@ -16,7 +16,7 @@ jobs:
         env:
           CR_PAT: ${{ secrets.CR_PAT }}
           CR_USERNAME: ${{ secrets.CR_USERNAME }}
-      - name: Push to GitHub Packages
+      - name: Push to GitHub Container Registry
         run: |
           export GIT_HASH=$(git rev-parse HEAD)
           HASH=$GIT_HASH make push
