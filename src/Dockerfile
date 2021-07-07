@@ -38,7 +38,8 @@ RUN pip3 install -U setuptools ledgerblue pillow conan
 
 # ARM compilers
 ADD install_compiler.sh /tmp/install_compiler.sh
-RUN echo "5811228bf42074da1574d530059b55a4fe2a8730762ce14252113a500259647d  /tmp/install_compiler.sh" | sha256sum --check 
+RUN sha256sum /tmp/install_compiler.sh
+RUN echo "249979567971aac88f357f0c8fa8a530920484d604b2fe486a6d926392a2014f  /tmp/install_compiler.sh" | sha256sum --check 
 RUN /tmp/install_compiler.sh
 
 ADD install_rust.sh /tmp/install_rust.sh

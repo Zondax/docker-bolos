@@ -1,5 +1,5 @@
-DOCKER_IMAGE_PREFIX=zondax/builder
-DOCKER_IMAGE_BOLOS=${DOCKER_IMAGE_PREFIX}-bolos
+DOCKER_IMAGE_PREFIX=zondax/builder-
+DOCKER_IMAGE=${DOCKER_IMAGE_PREFIX}bolos
 
 INTERACTIVE:=$(shell [ -t 0 ] && echo 1)
 
@@ -19,25 +19,23 @@ endif
 
 default: build
 
-build: build_bolos
-
-build_bolos:
-	cd src && docker build --rm -f Dockerfile -t ghcr.io/$(DOCKER_IMAGE_BOLOS):$(HASH_TAG) -t ghcr.io/$(DOCKER_IMAGE_BOLOS):latest .
+build:
+	cd src && docker build --rm -f Dockerfile -t $(DOCKER_IMAGE):$(HASH_TAG) -t $(DOCKER_IMAGE):latest .
 
 publish_login:
-	docker login ghcr.io
-publish_bolos: build_bolos
-	docker push ghcr.io/$(DOCKER_IMAGE_BOLOS):latest
-	docker push ghcr.io/$(DOCKER_IMAGE_BOLOS):$(HASH_TAG)
+	docker login
+publish: build
+	docker push $(DOCKER_IMAGE):latest
+	docker push $(DOCKER_IMAGE):$(HASH_TAG)
 
 publish: build
 publish: publish_login
-publish: publish_bolos
+publish: publish
 
-push: publish_bolos
+push: publish
 
 pull:
-	docker pull $(DOCKER_IMAGE_BOLOS):$(HASH_TAG)
+	docker pull $(DOCKER_IMAGE):$(HASH_TAG)
 
 define run_docker
 	docker run $(TTY_SETTING) $(INTERACTIVE_SETTING) \
@@ -51,5 +49,5 @@ define run_docker
 endef
 
 
-shell_bolos: build_bolos
-	$(call run_docker,$(DOCKER_IMAGE_BOLOS):$(HASH_TAG),/bin/bash)
+shell: build
+	$(call run_docker,$(DOCKER_IMAGE):$(HASH_TAG),/bin/bash)
