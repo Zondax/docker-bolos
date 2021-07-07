@@ -7,22 +7,25 @@ rm -rf ${DEST} || true
 mkdir -p ${DEST}
 cd ${DEST}
 
-wget https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q1-update/+download/gcc-arm-none-eabi-5_3-2016q1-20160330-linux.tar.bz2
-wget https://releases.llvm.org/7.0.0/clang+llvm-7.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
+wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/10-2020q4/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
+wget https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz
 
-echo "69b85c833cd28ea04ce34002464f10a6ad9656dd2bba0f7133536a9927c660d2  clang+llvm-7.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz" | sha256sum --check
-echo "217850b0f3297014e8e52010aa52da0a83a073ddec4dc49b1a747458c5d6a223  gcc-arm-none-eabi-5_3-2016q1-20160330-linux.tar.bz2" | sha256sum --check
+sha256sum clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz
+sha256sum gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
+
+echo "a9ff205eb0b73ca7c86afc6432eed1c2d49133bd0d49e47b15be59bbf0dd292e  clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz" | sha256sum --check
+echo "21134caa478bbf5352e239fbc6e2da3038f8d2207e089efc96c3b55f1edcd618  gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2" | sha256sum --check
 
 echo "decompress gcc..."
-tar xfj gcc-arm-none-eabi-5_3-2016q1-20160330-linux.tar.bz2
+tar xfj gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
 echo "decompress clang..."
-tar xf clang+llvm-7.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
+tar xf clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz
 
-mv clang+llvm-7.0.0-x86_64-linux-gnu-ubuntu-16.04 clang-arm-fropi
+mv clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04 clang-arm-fropi
 chmod 757 -R clang-arm-fropi/
 chmod +x clang-arm-fropi/bin/clang
 
-ln -s ${DEST}/gcc-arm-none-eabi-5_3-2016q1/bin/arm-none-eabi-gcc /usr/bin/arm-none-eabi-gcc
+ln -s ${DEST}/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc /usr/bin/arm-none-eabi-gcc
 ln -s ${DEST}/clang-arm-fropi/bin/clang /usr/bin/clang
 
 # Avoid high UID/GID that affect CircleCI
