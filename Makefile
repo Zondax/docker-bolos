@@ -19,8 +19,13 @@ endif
 
 default: build
 
-build:
-	cd src && docker build --rm -f Dockerfile -t $(DOCKER_IMAGE):$(HASH_TAG) -t $(DOCKER_IMAGE):latest .
+build: build_x86
+
+build_x86:
+	cd src && docker buildx build --platform linux/amd64 --rm -f ./x86.Dockerfile -t $(DOCKER_IMAGE):$(HASH_TAG) -t $(DOCKER_IMAGE):latest .
+
+build_aarch64:
+	cd src && docker buildx build --platform linux/arm64 --rm -f ./aarch64.Dockerfile -t $(DOCKER_IMAGE):$(HASH_TAG) -t $(DOCKER_IMAGE):latest .
 
 publish_login:
 	docker login
