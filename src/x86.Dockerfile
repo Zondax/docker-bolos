@@ -37,7 +37,7 @@ RUN apt-get update && \
 RUN pip3 install -U setuptools ledgerblue pillow conan
 
 # ARM compilers
-ADD install_compiler.sh /tmp/install_compiler.sh
+ADD x86/install_compiler.sh /tmp/install_compiler.sh
 RUN sha256sum /tmp/install_compiler.sh
 RUN echo "249979567971aac88f357f0c8fa8a530920484d604b2fe486a6d926392a2014f  /tmp/install_compiler.sh" | sha256sum --check 
 RUN /tmp/install_compiler.sh
