@@ -18,7 +18,7 @@ FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
-    apt-get -y install build-essential ccache git wget sudo zip \
+    apt-get -y install build-essential ccache golang-go git wget sudo zip \
     curl cmake software-properties-common apt-utils binutils-arm-none-eabi libncurses5
 
 # Install Python
