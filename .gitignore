@@ -1,2 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 /.idea
+.vscode/configurationCache.log
+
+.vscode/dryrun.log
+
+.vscode/targets.log
