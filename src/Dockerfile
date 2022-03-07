@@ -37,7 +37,7 @@ RUN apt-get update && apt-get -y install python3 python3-pip python-is-python3
 # udev rules
 ADD 20-hw1.rules /etc/udev/rules.d/20-hw1.rules
 ADD install_compiler.$TARGETARCH.sh /tmp/install_compiler.sh
-ADD create_users.$TARGETARCH.sh /tmp/create_users.sh
+ADD create_users.sh /tmp/create_users.sh
 ADD install_user.sh /tmp/install_user.sh
 ADD install_rust.sh /tmp/install_rust.sh
 
