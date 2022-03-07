@@ -28,7 +28,7 @@ chmod +x clang-arm-fropi/bin/clang
 ln -s ${DEST}/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc /usr/bin/arm-none-eabi-gcc
 ln -s ${DEST}/clang-arm-fropi/bin/clang /usr/bin/clang
 
-# Avoid high UID/GID that affect CircleCI
+# Avoid high UID/GID that affect CI
 chown root:root /opt/bolos -R
 
 echo "export BOLOS_ENV=/opt/bolos" >> ~/.bashrc
