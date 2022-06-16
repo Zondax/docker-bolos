@@ -20,6 +20,7 @@ endif
 default: build
 
 build_push:
+	docker login
 	docker buildx create --use
 	cd src && docker buildx build --platform=linux/amd64,linux/arm64 --rm -f ./Dockerfile -t $(DOCKER_IMAGE):$(HASH_TAG) -t $(DOCKER_IMAGE):latest --push . 
 
@@ -29,8 +30,8 @@ build:
 
 push:
 	docker login
-	docker push $(DOCKER_IMAGE):latest
-	docker push $(DOCKER_IMAGE):$(HASH_TAG)
+	docker buildx create --use
+	cd src && docker buildx build --platform=linux/amd64,linux/arm64 -f ./Dockerfile -t $(DOCKER_IMAGE):$(HASH_TAG) -t $(DOCKER_IMAGE):latest --push . 
 
 pull:
 	docker pull $(DOCKER_IMAGE):$(HASH_TAG)
