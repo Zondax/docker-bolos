@@ -2,7 +2,7 @@
 set -e
 
 # Install ghr
-go get -u -v github.com/tcnksm/ghr
+go install github.com/tcnksm/ghr@latest
 
 curl https://sh.rustup.rs -sSf | bash -s -- -y
 #/tmp/install_rust.sh 1.47.0         # Install rust 1.47 (required by zcash apps)
