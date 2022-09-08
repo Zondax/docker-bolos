@@ -1,4 +1,4 @@
-# Docker Containers
+# Docker Container for BOLOS apps
 
 This repository includes the following containers:
 
