@@ -56,8 +56,8 @@ WORKDIR /home/zondax_mac
 USER zondax_mac
 RUN /tmp/install_user.sh
 
-WORKDIR /home/zondax_circleci
-USER zondax_circleci
+WORKDIR /home/zondax_circle
+USER zondax_circle
 RUN if [ "$TARGETARCH" = "amd64" ]; then /tmp/install_user.sh; fi
 
 WORKDIR /home/zondax
