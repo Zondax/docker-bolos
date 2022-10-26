@@ -23,10 +23,18 @@ tar xf clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz
 
 mv clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04 clang-arm-fropi
 chmod 757 -R clang-arm-fropi/
+
+#get LLVM binaries
 chmod +x clang-arm-fropi/bin/clang
+chmod +x clang-arm-fropi/bin/llc
+chmod +x clang-arm-fropi/bin/opt
 
 ln -s ${DEST}/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc /usr/bin/arm-none-eabi-gcc
+
+#link LLVM binaries
 ln -s ${DEST}/clang-arm-fropi/bin/clang /usr/bin/clang
+ln -s ${DEST}/clang-arm-fropi/bin/llc /usr/bin/llc
+ln -s ${DEST}/clang-arm-fropi/bin/opt /usr/bin/opt
 
 # Avoid high UID/GID that affect CI
 chown root:root /opt/bolos -R
