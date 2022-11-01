@@ -18,17 +18,21 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ARG TARGETOS TARGETARCH
 
+# Add LLVM 13 to apt sources
+ADD llvm13.focal.list /etc/apt/sources.list.d/llvm13.focal.list
+RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+
 RUN if [ "$TARGETARCH" = "amd64" ]; then \
     apt-get update && \
     apt-get -y install build-essential ccache golang-go git wget sudo udev zip \
     libudev-dev libusb-1.0-0-dev binutils-arm-none-eabi \
-    curl cmake software-properties-common apt-utils coreutils \
+    curl cmake software-properties-common apt-utils coreutils llvm-13 \
     ; fi
 
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
     apt-get update && \
     apt-get -y install build-essential ccache golang-go git wget sudo zip \ 
-    curl cmake software-properties-common apt-utils binutils-arm-none-eabi libncurses5 \
+    curl cmake software-properties-common apt-utils binutils-arm-none-eabi libncurses5 llvm-13 \
     ; fi
 
 # Install Python
