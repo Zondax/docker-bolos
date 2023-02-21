@@ -27,9 +27,14 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then \
 
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
     apt-get update && \
-    apt-get -y install build-essential ccache golang-go git wget sudo zip \ 
+    apt-get -y install build-essential ccache golang-go git wget sudo zip \
     curl cmake software-properties-common apt-utils binutils-arm-none-eabi libncurses5 \
     ; fi
+
+# Add LLVM 13 to apt sources and install
+ADD llvm13.focal.list /etc/apt/sources.list.d/llvm13.focal.list
+RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+RUN apt-get update && apt-get -y install llvm-13
 
 # Install Python
 RUN apt-get update && apt-get -y install python3 python3-pip python-is-python3
