@@ -2,5 +2,4 @@
 set -e
 
 curl https://sh.rustup.rs -sSf | bash -s -- -y
-/tmp/install_rust.sh 1.63.0
-
+/tmp/install_rust.sh 1.67.1
