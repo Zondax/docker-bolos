@@ -1,5 +1,5 @@
-DOCKER_IMAGE_PREFIX=zondax/builder-
-DOCKER_IMAGE=${DOCKER_IMAGE_PREFIX}bolos
+DOCKER_IMAGE_ZONDAX=zondax/builder-bolos
+DOCKER_IMAGE_LEDGER=zondax/ledger-app-builder
 
 INTERACTIVE:=$(shell [ -t 0 ] && echo 1)
 
@@ -19,22 +19,28 @@ endif
 
 default: build
 
-build_push:
-	docker login
-	docker buildx create --use
-	cd src && docker buildx build --platform=linux/amd64,linux/arm64 --rm -f ./Dockerfile -t $(DOCKER_IMAGE):$(HASH_TAG) -t $(DOCKER_IMAGE):latest --push . 
+build_push: push
 
-build:
+prepare_build:
 	docker buildx create --use
-	cd src && docker buildx build --platform=linux/amd64,linux/arm64 --rm -f ./Dockerfile -t $(DOCKER_IMAGE):$(HASH_TAG) -t $(DOCKER_IMAGE):latest .
+
+build_zondax: prepare_build
+	cd src && docker buildx build --platform=linux/amd64,linux/arm64 -t $(DOCKER_IMAGE_ZONDAX):$(HASH_TAG) -t $(DOCKER_IMAGE_ZONDAX):latest .
+
+build_ledger: prepare_build
+	cd ledger-app-builder && docker buildx build --platform=linux/amd64,linux/arm64 -t $(DOCKER_IMAGE_LEDGER):$(HASH_TAG) -t $(DOCKER_IMAGE_LEDGER):latest .
+
+build: build_zondax build_ledger
 
 push:
 	docker login
 	docker buildx create --use
-	cd src && docker buildx build --platform=linux/amd64,linux/arm64 -f ./Dockerfile -t $(DOCKER_IMAGE):$(HASH_TAG) -t $(DOCKER_IMAGE):latest --push . 
+	cd src && docker buildx build --platform=linux/amd64,linux/arm64 -t $(DOCKER_IMAGE_ZONDAX):$(HASH_TAG) -t $(DOCKER_IMAGE_ZONDAX):latest --push .
+	cd ledger-app-builder && docker buildx build --platform=linux/amd64,linux/arm64 -t $(DOCKER_IMAGE_LEDGER):$(HASH_TAG) -t $(DOCKER_IMAGE_LEDGER):latest --push .
 
 pull:
-	docker pull $(DOCKER_IMAGE):$(HASH_TAG)
+	docker pull $(DOCKER_IMAGE_ZONDAX):$(HASH_TAG)
+	docker pull $(DOCKER_IMAGE_LEDGER):$(HASH_TAG)
 
 define run_docker
 	docker run $(TTY_SETTING) $(INTERACTIVE_SETTING) \
@@ -48,5 +54,5 @@ define run_docker
 endef
 
 
-shell: build
-	$(call run_docker,$(DOCKER_IMAGE):$(HASH_TAG),/bin/bash)
+shell_zondax: build_zondax
+	$(call run_docker,$(DOCKER_IMAGE_ZONDAX):$(HASH_TAG),/bin/bash)
