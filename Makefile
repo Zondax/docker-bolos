@@ -21,22 +21,21 @@ default: build
 
 build_push: push
 
-prepare_build:
-	docker buildx create --use
-
-build_zondax: prepare_build
+build_zondax:
 	cd src && docker buildx build --platform=linux/amd64,linux/arm64 -t $(DOCKER_IMAGE_ZONDAX):$(HASH_TAG) -t $(DOCKER_IMAGE_ZONDAX):latest .
 
-build_ledger: prepare_build
+build_ledger:
 	cd ledger-app-builder && docker buildx build --platform=linux/amd64,linux/arm64 -t $(DOCKER_IMAGE_LEDGER):$(HASH_TAG) -t $(DOCKER_IMAGE_LEDGER):latest .
 
 build: build_zondax build_ledger
 
-push:
-	docker login
-	docker buildx create --use
+push_zondax:
 	cd src && docker buildx build --platform=linux/amd64,linux/arm64 -t $(DOCKER_IMAGE_ZONDAX):$(HASH_TAG) -t $(DOCKER_IMAGE_ZONDAX):latest --push .
+
+push_ledger:
 	cd ledger-app-builder && docker buildx build --platform=linux/amd64,linux/arm64 -t $(DOCKER_IMAGE_LEDGER):$(HASH_TAG) -t $(DOCKER_IMAGE_LEDGER):latest --push .
+
+push: push_zondax push_ledger
 
 pull:
 	docker pull $(DOCKER_IMAGE_ZONDAX):$(HASH_TAG)
