@@ -7,7 +7,5 @@ RUN rustup target add thumbv6m-none-eabi
 RUN rustup target add thumbv8m.main-none-eabi
 RUN rustup component add rust-src
 
-RUN cargo install bindgen-cli
-
 ADD entrypoint.sh /tmp/entrypoint.sh
 ENTRYPOINT ["/tmp/entrypoint.sh"]
