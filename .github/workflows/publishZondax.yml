@@ -1,10 +1,10 @@
-name: "Publish Builder Bolos Image"
+name: "Build and Publish Builder Bolos Image"
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
-      - master
+    paths:
+      - "src/*"
+      - ".github/workflows/publishZondax.yml"
 
 jobs:
   build_zondax:
@@ -29,5 +29,5 @@ jobs:
         with:
           context: src
           platforms: linux/amd64,linux/arm64
-          push: true
+          push: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch' }}
           tags: zondax/builder-bolos:${{ steps.hash.outputs.hash }},zondax/builder-bolos:latest

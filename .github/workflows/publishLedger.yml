@@ -1,10 +1,10 @@
-name: "Publish Ledger App Builder Image"
+name: "Build and Publish Ledger App Builder Image"
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
-      - master
+    paths:
+      - "ledger-app-builder/*"
+      - ".github/workflows/publishLedger.yml"
 
 jobs:
   publish_ledger:
@@ -31,7 +31,7 @@ jobs:
         with:
           context: ledger-app-builder
           platforms: linux/amd64,linux/arm64
-          push: true
+          push: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch' }}
           tags: >-
             zondax/ledger-app-builder:${{ steps.hash.outputs.hash }},
             zondax/ledger-app-builder:latest,
