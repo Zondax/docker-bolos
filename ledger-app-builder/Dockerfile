@@ -1,6 +1,6 @@
 FROM ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
 
-RUN apk add bear clang-dev # allows compile_commands.json generation
+RUN apt-get update && apt-get install -y bear clang libclang-dev && rm -rf /var/lib/apt/lists/* # allows compile_commands.json generation
 
 # for rust-based apps
 RUN rustup target add thumbv6m-none-eabi
