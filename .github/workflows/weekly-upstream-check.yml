@@ -1,0 +1,61 @@
+name: "Weekly Upstream Check"
+
+on:
+  schedule:
+    - cron: "0 9 * * 1" # every Monday at 09:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      needs_build: ${{ steps.check.outputs.needs_build }}
+      upstream_hash: ${{ steps.upstream.outputs.hash }}
+    steps:
+      - name: Get upstream HEAD hash
+        id: upstream
+        run: |
+          HASH=$(git ls-remote https://github.com/LedgerHQ/ledger-app-builder | head -n 1 | awk '{print $1}')
+          echo "hash=$HASH" >> $GITHUB_OUTPUT
+          echo "Upstream HEAD: $HASH"
+
+      - name: Check if image tag already exists on Docker Hub
+        id: check
+        run: |
+          TAG="ledger-${{ steps.upstream.outputs.hash }}"
+          if curl -sfL "https://hub.docker.com/v2/repositories/zondax/ledger-app-builder/tags/${TAG}" > /dev/null; then
+            echo "needs_build=false" >> $GITHUB_OUTPUT
+            echo "Tag ${TAG} already published — nothing to do."
+          else
+            echo "needs_build=true" >> $GITHUB_OUTPUT
+            echo "Tag ${TAG} missing — will rebuild."
+          fi
+
+  build:
+    needs: check
+    if: needs.check.outputs.needs_build == 'true'
+    uses: ./.github/workflows/publishLedger.yml
+    secrets: inherit
+
+  notify:
+    needs: [check, build]
+    if: needs.check.outputs.needs_build == 'true' && success()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post Slack notification
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          UPSTREAM_HASH: ${{ needs.check.outputs.upstream_hash }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          SHORT="${UPSTREAM_HASH:0:7}"
+          jq -n \
+            --arg hash "$UPSTREAM_HASH" \
+            --arg short "$SHORT" \
+            --arg run "$RUN_URL" \
+            '{text: "*Ledger app-builder updated:* <https://github.com/LedgerHQ/ledger-app-builder/commit/\($hash)|`\($short)`> A fresh `zondax/ledger-app-builder:ledger-\($hash)` has been pushed. Bump the image hash in zxlib to pick up the new SDK. <\($run)|Workflow run>"}' \
+            | curl -sSf -X POST -H 'Content-Type: application/json' \
+                --data @- "$SLACK_WEBHOOK_URL"
