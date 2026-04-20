@@ -1,6 +1,11 @@
 name: "Build and Publish Ledger App Builder Image"
 on:
   workflow_dispatch:
+  workflow_call:
+    outputs:
+      ledger_hash:
+        description: "LedgerHQ/ledger-app-builder HEAD baked into the image"
+        value: ${{ jobs.publish_ledger.outputs.ledger_hash }}
   push:
     paths:
       - "ledger-app-builder/*"
@@ -9,6 +14,8 @@ on:
 jobs:
   publish_ledger:
     runs-on: ubuntu-latest
+    outputs:
+      ledger_hash: ${{ steps.hash.outputs.ledgerHash }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,7 +45,7 @@ jobs:
         with:
           context: ledger-app-builder
           platforms: linux/amd64,linux/arm64
-          push: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch' }}
+          push: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
           tags: >-
             zondax/ledger-app-builder:${{ steps.hash.outputs.hash }},
             zondax/ledger-app-builder:latest,
